@@ -1,20 +1,25 @@
 '''
-@Name: 3D_Robot_6.py 
-Created on May 9, 2013
-@author: Phil Williammee
-credits: http://www.maquinapensante.com
-Python version 2.7.3
-matplotlib - 1.2.1.win32-py2.7.exe
+Original draw robot methods taken from:
+    @author: Phil Williammee
+    credits: http://www.maquinapensante.com
+
+Optimizations and GUI changes by:
+    @author: Elisha Ferrara
+    @author: King Ng
+    @author: Andrew Spatafora
 '''
-from matplotlib.widgets import Slider, RadioButtons
+
+from matplotlib.widgets import Slider, Button
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
 import numpy as np
 
-def main():
-    myRobot=Draw_Robot()
 
-class Draw_Robot():      
+def main():
+    myRobot=Draw_Robot()      
+
+class Draw_Robot():
+        
     def __init__(self):
         '''variable definitions'''
         SEGMENTS = int(4) #number of segments
@@ -31,60 +36,25 @@ class Draw_Robot():
         self.tz = 20.0 # z axis starting position height
         self.l12 = 0.0 # hypotenuse belween a1 & a2
         self.a12 = 0.0 #inscribed angle between hypotenuse, w    
-        self.fig = plt.figure("Simple IK    Robot Simulator")  #create the frame     
+        self.fig = plt.figure("CS 4TE3 Robot Simulator")  #create the frame     
         self.ax = plt.axes([0.05, 0.2, 0.90, .75], projection='3d') #3d ax panel 
         self.axe = plt.axes([0.25, 0.85, 0.001, .001])#panel for error message
-        
-        '''draw widgets'''
-        #draw a0 slider panel
-        axxval = plt.axes([0.35, 0.1, 0.45, 0.03])
-        a0_val = Slider(axxval, 'rotation a0', 0.0, 300, valinit=180)
-            
-        #draw tw slider panel
-        axyval = plt.axes([0.35, 0.0575, 0.45, 0.03])
-        tw_val = Slider(axyval, 'extension w', 5, 280, valinit=20)
-        
-        #draw xval slider panel
-        axzval = plt.axes([0.35, 0.015, 0.45, 0.03])
-        z_val = Slider(axzval, 'height z', -50, 280, valinit=20)  
-            
-        # radio current_gripper_set buttons
-        rax = plt.axes([0.05, 0.02, 0.12, 0.12])#, axisbg=axcolor)
-        rax.set_title('Gripper Angle', fontsize=12)
-        set_gripper = RadioButtons(rax, ('0'+u"\u00b0", '45'+u"\u00b0", '90'+u"\u00b0"), active=2)
-        
-        self.display_error()#draw the error and hide it
-        self.draw_robot()#draw function to draw robot
-        
-        '''widget Event Handlers'''
-        def update_a0_val(val): # Slider a0 theta Event
-            self.a[0] = np.deg2rad(val)
-            self.draw_robot()
-        a0_val.on_changed(update_a0_val) 
-        
-        def update_tw_val(val):#extension w Slider Event
-            self.tw = val
-            self.draw_robot()
-        tw_val.on_changed(update_tw_val)   
-        
-        def update_z_val(val):#height z slider event
-            self.tz = val
-            self.draw_robot()
-        z_val.on_changed(update_z_val) 
-        
-        def set_gripper_angle(label):# Simulation Radio Button Event
-            if label==('0'+u"\u00b0"):
-                self.current_gripper = 0
-            if label==('45'+u"\u00b0"):
-                self.current_gripper = 1
-            if label==('90'+u"\u00b0"):
-                self.current_gripper = 2  
-            self.draw_robot()   
-        set_gripper.on_clicked(set_gripper_angle)
-        
+
+        self.display_error()
+        self.draw_robot()
+
+        butval = plt.axes([0.35, 0.1, 0.1, 0.075])
+        but = Button(butval, 'move')
+        but.on_clicked(self.move_click)
+
         plt.show()#end of constructor
-         
-    '''class fuctions''' 
+
+    def move_click(self, event):
+        self.tw = 60.0
+        self.tz = 40.0
+        self.draw_robot()
+        
+            
     def display_error(self):
         self.axe.set_visible(False)
         self.axe.set_yticks([])
