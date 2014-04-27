@@ -22,7 +22,7 @@ class Draw_Robot():
         
     def __init__(self):
         '''variable definitions'''
-        SEGMENTS = int(4) #number of segments
+        SEGMENTS = int(3) #number of segments
         #could probably make these lists instead of arrays
         self.l = np.array([0, 100, 100, 80])# actual measurements of segment length in mm
         self.w = np.array([0]*SEGMENTS,dtype=float) #horizontal coordinate
@@ -39,20 +39,52 @@ class Draw_Robot():
         self.fig = plt.figure("CS 4TE3 Robot Simulator")  #create the frame     
         self.ax = plt.axes([0.05, 0.2, 0.90, .75], projection='3d') #3d ax panel 
         self.axe = plt.axes([0.25, 0.85, 0.001, .001])#panel for error message
-
+        self.count = 0
+        self.coords = ((20,30),(50,60),(30,40),(70,100),(70,150))
+        
         self.display_error()
-        self.draw_robot()
+        self.draw_robot() 
 
         butval = plt.axes([0.35, 0.1, 0.1, 0.075])
         but = Button(butval, 'move')
         but.on_clicked(self.move_click)
+        #error = dist(1,2);
+        #print (error)
 
         plt.show()#end of constructor
 
+          
+ 
     def move_click(self, event):
-        self.tw = 60.0
-        self.tz = 40.0
+
+        self.tw = self.coords[self.count][0]
+        self.tz = self.coords[self.count][1]
+
+        self.count +=1
+        if self.count == 5:
+            self.count = 0
         self.draw_robot()
+    
+    #ccd alogorithm
+    def ccd(self):
+        distance = np.sqrt((self.tw - self.x[2]) + (self.tz - self.z[2]))
+        #iterate until end effector is less than 1 point away.
+        while distance > 1:
+            pt = (tw,tz)
+            e = (self.x[2], self.z[2])
+            j = (self.x[1],self,z[1])
+
+            temp1 = (e - j)/np.norm(e - j)
+            temp2 = (pt - j)/np.norm(pt - j)
+            
+            angle = np.arccos(np.dot(temp1,temp2))
+            #direction of rotation
+            #rotation = np.cross(
+        
+        
+       
+        
+            
         
             
     def display_error(self):
@@ -64,8 +96,8 @@ class Draw_Robot():
                       bbox={'facecolor':'red', 'alpha':0.5, 'pad':10}, size=20, va = 'baseline')                  
                        
     def calc_p2(self):#calculates position 2
-        self.w[3] = self.tw
-        self.z[3] = self.tz
+        #self.w[3] = self.tw
+        #self.z[3] = self.tz
         self.w[2] = self.tw-np.cos(np.radians(self.gripper_angle[self.current_gripper]))*self.l[3]
         self.z[2] = self.tz-np.sin(np.radians(self.gripper_angle[self.current_gripper]))*self.l[3]
         self.l12 = np.sqrt(np.square(self.w[2])+np.square(self.z[2])) 
@@ -90,7 +122,7 @@ class Draw_Robot():
         self.ax.cla() #clear current axis
         #draw new lines,  two lines for "fancy" looks
         self.ax.plot(xs, ys, zs, 'o-', markersize=20, 
-                     markerfacecolor="orange", linewidth = 8, color="blue")
+                     markerfacecolor="red", linewidth = 8, color="black")
         self.ax.plot(xs, ys, zs, 'o-', markersize=4, 
                      markerfacecolor="blue", linewidth = 1, color="silver")
   
@@ -101,13 +133,13 @@ class Draw_Robot():
         self.ax.set_xlabel('X axis')
         self.ax.set_ylabel('Y axis')
         self.ax.set_zlabel('Z axis')
-        for j in self.ax.get_xticklabels() + self.ax.get_yticklabels(): #hide ticks
-            j.set_visible(False)
+        for j in self.ax.get_xticklabels() + self.ax.get_yticklabels(): #show ticks
+            j.set_visible(True)
         self.ax.set_axisbelow(True) #send grid lines to the background
         
     def get_angles(self): #get all of the motor angles see diagram
         self.a[2] = np.arctan((self.z[2]-self.z[1])/(self.w[2]-self.w[1]))-self.a[1]
-        self.a[3] = np.deg2rad(self.gripper_angle[self.current_gripper])-self.a[1]-self.a[2]  
+        #self.a[3] = np.deg2rad(self.gripper_angle[self.current_gripper])-self.a[1]-self.a[2]  
         angles = np.array(self.a).tolist()
         return angles
         
