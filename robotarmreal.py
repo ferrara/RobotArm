@@ -87,6 +87,9 @@ def ccd():
             segments[i].a += sign_dAng * magn_dAng #update angle of the segment
             
         iter+=1
+        
+        print "current arm head position: ", getHeadPos()
+        
         if (iter > 100):
             print "Error: could not reach point"
             break
