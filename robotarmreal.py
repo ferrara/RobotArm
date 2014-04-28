@@ -49,7 +49,7 @@ def absDist(a, b):
 
 # iterate through each segment, starting at the tip.
     # get angle between base of segment and current head pos,
-    # and angle between base of segment and target pos.
+    # and base of segment and target pos.
     
     # use rearranged sine, cosine laws to get angle between
     # the two vectors.
@@ -95,7 +95,13 @@ def ccd():
     return "lol"
 
 def main():
-    ccd()
+    totalArmLength=0
+    for seg in segments:
+        totalArmLength += seg.l
+    if (totalArmLength * 0.9 > absDist(goalPos, basePos)):
+        ccd()
+    else:
+        print "Error: goal point too far away"
         
 if __name__ == '__main__':
     main()
