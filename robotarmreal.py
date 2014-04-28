@@ -13,7 +13,7 @@ class seg:
 
 fig = plt.figure("CS 4TE3 Robot Simulator")
 ax = plt.axes([0.05, 0.2, 0.90, .75],xlim=200,ylim=200)
-#ax.axis([0,200,0,200])
+ax.axis([0,200,0,200])
 plt.ion()
 
 temp = plt.axes([0.0, 0.0, 0.01, 0.01])
@@ -32,13 +32,15 @@ nSegs = len(segments)
 
 
 def draw(x,y):
+           
     ax.cla() #clear current axis
     ax.plot(x,y,'o-', markersize=20, markerfacecolor="red", linewidth = 8, color="black")
     ax.plot(x,y,'o-', markersize=4, markerfacecolor="blue", linewidth = 1, color="silver")
     ax.set_xlabel('X axis')
     ax.set_ylabel('Y axis')
     #ax.relim()
-    ax.autoscale_view()
+    #ax.autoscale_view()
+    
     plt.draw()
     
         
@@ -118,7 +120,10 @@ def ccd():
             ys[i] = segPos[1]
             xs[3] = currentPos[0]
             ys[3] = currentPos[1]
+            #draw(xs,ys)
+            #time.sleep(2)
             
+        
         draw(xs,ys)
         time.sleep(2)
         iter+=1
